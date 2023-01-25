@@ -1,0 +1,108 @@
+команды создание БД:
+1.CREATE DATABASE internet_shop;
+2.USE internet_shop;
+3.CREATE TABLE Gender
+  (
+	ID INT PRIMARY KEY AUTO_INCREMENT,
+    	Title CHAR(15) NOT NULL
+    
+  );
+4.CREATE TABLE Customers
+  (
+	ID INT PRIMARY KEY AUTO_INCREMENT,
+    	FirstName VARCHAR(50) NOT NULL,
+    	LastName VARCHAR(50) NOT NULL,
+    	Patronymic VARCHAR(50) NULL,
+    	Birhday DATE NOT NULL,
+    	Email VARCHAR(100) NOT NULL,
+    	RegistrationDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+    	GenderID INT NOT NULL,
+    	CONSTRAINT customers_gender_fk
+    	FOREIGN KEY (GenderID) REFERENCES Gender (ID)
+    	ON DELETE CASCADE 
+    	  
+  );
+5.CREATE TABLE Sales
+  (
+	ID INT PRIMARY KEY AUTO_INCREMENT,
+    	SalesDate date NOT NULL,
+    	CustomersID INT NOT NULL,
+    	CONSTRAINT sales_customers_fk
+    	FOREIGN KEY (CustomersID) REFERENCES Customers(ID)
+    	ON DELETE CASCADE 
+  );
+6.CREATE TABLE ManuFacturer
+  (
+	ID INT PRIMARY KEY AUTO_INCREMENT,
+	Title VARCHAR(250) NOT NULL
+  );
+7.CREATE TABLE TypeOfGoods
+  (
+	ID INT PRIMARY KEY AUTO_INCREMENT,
+    	Title VARCHAR(100) NOT NULL
+    
+  );
+8.CREATE TABLE ImageGood
+  (
+	ID INT PRIMARY KEY AUTO_INCREMENT,
+	ProductID int NOT NULL
+	Image BLOB NOT NULL
+    	CONSTRAINT imageGood_product_fk
+    	FOREIGN KEY (ProductID) REFERENCES Product (ID)
+    	ON DELETE CASCADE 
+  );
+9.CREATE TABLE Product
+ (
+	ID INT PRIMARY KEY AUTO_INCREMENT,
+    	Title VARCHAR(200) NOT NULL,
+    	Price Decimal(6.2) NOT NULL CHECK (),
+    	ManuFacturerID INT NOT NULL,
+    	TypeOfGoodsID INT NOT NULL,
+    	Description VARCHAR(3000) NULL,
+    	MainImagePath VARCHAR(1000) NOT NULL,
+    	CONSTRAINT product_manuFacturer_fk
+    	FOREIGN KEY (ManuFacturerID) REFERENCES ManuFacturer (ID)
+    	ON DELETE CASCADE, 
+	CONSTRAINT product_typeOfGoods_fk
+    	FOREIGN KEY (TypeOfGoodsID) REFERENCES TypeOfGoods (ID)
+    	ON DELETE CASCADE
+);
+10.CREATE TABLE BILLS
+  (
+	ID INT PRIMARY KEY AUTO_INCREMENT,
+	SalesID INT NOT NULL,
+	PaymentTypeID INT NOT NULL,
+	PaymentStatusID INT NOT NULL,
+	CONSTRAINT bill_paymentype_fk
+	FOREIGN KEY (PaymentTypeID) REFERENCES PaymentType (ID)
+	ON DELETE CASCADE,
+	CONSTRAINT bill_paymentstatus_fk
+	FOREIGN KEY (PaymentStatusID) REFERENCES PaymentStatus (ID)
+	ON DELETE CASCADE,
+	CONSTRAINT bill_sales_fk
+	FOREIGN KEY (SalesID) REFERENCES Sales (ID)
+	ON DELETE CASCADE,
+  ); 
+11.CREATE TABLE PaymentType
+  (
+	ID INT PRIMARY KEY AUTO_INCREMENT,
+    	Title VARCHAR(100) NOT NULL
+  );
+12.CREATE TABLE PaymentStatus
+  (
+	ID INT PRIMARY KEY AUTO_INCREMENT,
+    	Title VARCHAR(45) NOT NULL
+  );
+13.CREATE TABLE OrderRows
+  (
+	ID INT PRIMARY KEY AUTO_INCREMENT,
+	SalesID INT NOT NULL,
+	ProductID INT NOT NULL,
+	Quantity INT DEFAULT 1 CHECK (Quantity > 0) NOT NULL,
+	CONSTRAINT orderrows_sales_fk
+    	FOREIGN KEY (SalesID) REFERENCES Sales (ID)
+    	ON DELETE CASCADE, 
+	CONSTRAINT orderrows_product_fk
+    	FOREIGN KEY (ProductID) REFERENCES Product (ID)
+    	ON DELETE CASCADE
+  );
